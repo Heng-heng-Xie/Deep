@@ -10,47 +10,50 @@ def train(args):
 
     """
     import torch
+    from os import path
+    if torch.cuda.is_available():
+        m_device = torch.device('cuda')
+    else:
+        m_device = torch.device('cpu')
 
-    device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
-
-    model.to(device)
+    model.to(m_device)
     if args.continue_training:
-        from os import path
         model.load_state_dict(torch.load(path.join(path.dirname(path.abspath(__file__)), '%s.th' % args.model)))
-
-    optimizer = torch.optim.SGD(model.parameters(), lr=args.learning_rate, momentum=0.9)
+    # loss and optimizer
+    optimizer = torch.optim.SGD(model.parameters(), lr=args.learning_rate, momentum=0.8)
     loss = ClassificationLoss()
 
-    train_data = load_data('data/train')
-    valid_data = load_data('data/valid')
+    t_data = load_data('data/train')
+    v_data = load_data('data/valid')
 
-    for epoch in range(args.num_epoch):
+    for epo in range(args.num_epoch):
         model.train()
-        loss_vals, acc_vals, vacc_vals = [], [], []
-        for img, label in train_data:
-            img, label = img.to(device), label.to(device)
-
-            logit = model(img)
-            loss_val = loss(logit, label)
-            acc_val = accuracy(logit, label)
-
-            loss_vals.append(loss_val.detach().cpu().numpy())
-            acc_vals.append(acc_val.detach().cpu().numpy())
+        loss_value = []
+        acc_value = []
+        vacc_value = []
+        for im, l in t_data:
+            im, l = im.to(m_device), l.to(m_device)
+            logit = model(im)
+            loss_value = loss(logit, l)
+            acc_value = accuracy(logit, l)
+            # loss and acc value.
+            loss_value.append(loss_value.detach().cpu().numpy())
+            acc_value.append(acc_value.detach().cpu().numpy())
 
             optimizer.zero_grad()
-            loss_val.backward()
+            loss_value.backward()
             optimizer.step()
 
-        avg_loss = sum(loss_vals) / len(loss_vals)
-        avg_acc = sum(acc_vals) / len(acc_vals)
+        loss_mean = sum(loss_value) / len(loss_value)
+        acc_mean = sum(acc_value) / len(acc_value)
 
         model.eval()
-        for img, label in valid_data:
-            img, label = img.to(device), label.to(device)
-            vacc_vals.append(accuracy(model(img), label).detach().cpu().numpy())
-        avg_vacc = sum(vacc_vals) / len(vacc_vals)
+        for im, l in v_data:
+            im, l = im.to(m_device), l.to(m_device)
+            vacc_value.append(accuracy(model(im), l).detach().cpu().numpy())
+        vacc_mean = sum(vacc_value) / len(vacc_value)
 
-        print('epoch %-3d \t loss = %0.3f \t acc = %0.3f \t val acc = %0.3f' % (epoch, avg_loss, avg_acc, avg_vacc))
+        print('epo %-3d \t loss = %0.3f \t acc = %0.3f \t val acc = %0.3f' % (epo, loss_mean, acc_mean, vacc_mean))
     save_model(model)
 
 
