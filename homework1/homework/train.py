@@ -55,7 +55,7 @@ def train(args):
             vacc_value.append(accuracy(model(im), l).detach().cpu().numpy())
         vacc_mean = sum(vacc_value) / len(vacc_value)
 
-        print('epo %-3d \t loss = %0.3f \t acc = %0.3f \t val acc = %0.3f' % (epo, loss_mean, acc_mean, vacc_mean))
+        print('epo \t loss \t acc \t valacc ' % (epo, loss_mean, acc_mean, vacc_mean))
     save_model(model)
 
 
