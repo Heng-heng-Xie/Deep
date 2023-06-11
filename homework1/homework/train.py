@@ -12,9 +12,11 @@ def train(args):
     import torch
     from os import path
     if torch.cuda.is_available():
-        m_device = torch.device('cuda')
+       m_device = 'cuda'
+    elif torch.backends.mps.is_available():
+       m_device = 'mps'
     else:
-        m_device = torch.device('cpu')
+       m_device = 'cpu'
 
     model.to(m_device)
     if args.continue_training:
