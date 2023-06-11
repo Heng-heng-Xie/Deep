@@ -20,7 +20,7 @@ def train(args):
     if args.continue_training:
         model.load_state_dict(torch.load(path.join(path.dirname(path.abspath(__file__)), '%s.th' % args.model)))
     # loss and optimizer
-    optimizer = torch.optim.SGD(model.parameters(), lr=args.learning_rate, momentum=0.8)
+    optimizer = torch.optim.SGD(model.parameters(), lr=args.learning_rate, momentum=0.95)
     loss = ClassificationLoss()
 
     t_data = load_data('data/train')
