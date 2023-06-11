@@ -36,11 +36,11 @@ def train(args):
         for im, l in t_data:
             im, l = im.to(m_device), l.to(m_device)
             logit = model(im)
-            loss_value = loss(logit, l)
-            acc_value = accuracy(logit, l)
+            loss_val = loss(logit, l)
+            acc_val = accuracy(logit, l)
             # loss and acc value.
-            loss_value.append(loss_value.detach().cpu().numpy())
-            acc_value.append(acc_value.detach().cpu().numpy())
+            loss_value.append(loss_val.detach().cpu().numpy())
+            acc_value.append(acc_val.detach().cpu().numpy())
 
             optimizer.zero_grad()
             loss_value.backward()
