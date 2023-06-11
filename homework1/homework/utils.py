@@ -12,14 +12,23 @@ class SuperTuxDataset(Dataset):
         Your code here
         Hint: Use the python csv library to parse labels.csv
 
-        WARNING: Do not perform data normalization here. 
+        WARNING: Do not perform data normalization here.
         """
+        titles = []
+        rows = []
+        with open(dataset_path/'labels.csv', 'r') as file:
+            data = csv.reader(file)
+            titles = next(data)
+            for i in data:
+                rows.append(tuple(i[:1]))
+        self.rows = rows
         raise NotImplementedError('SuperTuxDataset.__init__')
 
     def __len__(self):
         """
         Your code here
         """
+        return len(self.rows)
         raise NotImplementedError('SuperTuxDataset.__len__')
 
     def __getitem__(self, idx):
@@ -27,6 +36,7 @@ class SuperTuxDataset(Dataset):
         Your code here
         return a tuple: img, label
         """
+        return self.rows[idx]
         raise NotImplementedError('SuperTuxDataset.__getitem__')
 
 
