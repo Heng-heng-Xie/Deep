@@ -12,30 +12,30 @@ class SuperTuxDataset(Dataset):
         Your code here
         Hint: Use the python csv library to parse labels.csv
         """
-        import csv
         from os import path
-        self.data = []
-        to_tensor = transforms.ToTensor()
-        with open(path.join(dataset_path, 'labels.csv'), newline='') as f:
-            reader = csv.reader(f)
-            for fname, label, _ in reader:
-                if label in LABEL_NAMES:
-                    image = Image.open(path.join(dataset_path, fname))
-                    label_id = LABEL_NAMES.index(label)
-                    self.data.append((to_tensor(image), label_id))
+        import csv
+        self.rows = []
+        image_to_tensor = transforms.ToTensor()
+        with open(path.join(dataset_path, 'labels.csv'), newline='') as file:
+            data = csv.reader(file)
+            for f, l, _ in data:
+                if l in LABEL_NAMES:
+                    im = Image.open(path.join(dataset_path, f))
+                    label_n = LABEL_NAMES.index(l)
+                    self.rows.append((image_to_tensor(im), label_n))
 
     def __len__(self):
         """
         Your code here
         """
-        return len(self.data)
+        return len(self.rows)
 
     def __getitem__(self, idx):
         """
         Your code here
         return a tuple: img, label
         """
-        return self.data[idx]
+        return self.rows[idx]
 
 
 def load_data(dataset_path, num_workers=0, batch_size=128):
