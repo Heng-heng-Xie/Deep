@@ -16,7 +16,8 @@ class ClassificationLoss(torch.nn.Module):
 
         Hint: Don't be too fancy, this is a one-liner
         """
-        return F.cross_entropy(input, target)
+        output_soft = F.cross_entropy(input, target)
+        return output_soft
 
 
 class LinearClassifier(torch.nn.Module):
@@ -26,7 +27,7 @@ class LinearClassifier(torch.nn.Module):
         """
         Your code here
         """
-        self.network = torch.nn.Linear(3 * 64 * 64, 6)
+        self.nw = torch.nn.Linear(3 * 64 * 64, 6)
 
     def forward(self, x):
         """
@@ -35,7 +36,8 @@ class LinearClassifier(torch.nn.Module):
         @x: torch.Tensor((B,3,64,64))
         @return: torch.Tensor((B,6))
         """
-        return self.network(x.view(x.size(0), -1))
+        a = self.nw(x.view(x.size(0), -1))
+        return a
 
 
 class MLPClassifier(torch.nn.Module):
@@ -45,7 +47,7 @@ class MLPClassifier(torch.nn.Module):
         """
         Your code here
         """
-        self.network = torch.nn.Sequential(
+        self.nw = torch.nn.Sequential(
             torch.nn.Linear(3 * 64 * 64, 100),
             torch.nn.ReLU(),
             torch.nn.Linear(100, 6),
@@ -58,7 +60,8 @@ class MLPClassifier(torch.nn.Module):
         @x: torch.Tensor((B,3,64,64))
         @return: torch.Tensor((B,6))
         """
-        return self.network(x.view(x.size(0), -1))
+        mlp = self.nw(x.view(x.size(0), -1))
+        return mlp
 
 
 model_factory = {
