@@ -43,7 +43,7 @@ def train(args):
             acc_value.append(acc_val.detach().cpu().numpy())
 
             optimizer.zero_grad()
-            loss_value.backward()
+            loss_val.backward()
             optimizer.step()
 
         loss_mean = sum(loss_value) / len(loss_value)
