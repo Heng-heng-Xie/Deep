@@ -54,7 +54,7 @@ def train(args):
             im, l = im.to(m_device), l.to(m_device)
             vacc_value.append(accuracy(model(im), l).detach().cpu().numpy())
         vacc_mean = sum(vacc_value) / len(vacc_value)
-
+        print('epoch %-3d \t loss = %0.3f \t acc = %0.3f \t val acc = %0.3f' % (epo, loss_mean, acc_mean, vacc_mean))
        
     save_model(model)
 
