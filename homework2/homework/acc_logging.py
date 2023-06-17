@@ -12,6 +12,11 @@ def test_logging(train_logger, valid_logger):
     Make sure to set global_step correctly, for epoch=0, iteration=0: global_step=0
     Call the loss 'loss', and accuracy 'accuracy' (no slash or other namespace)
     """
+    train_logger = tb.SummaryWriter(path.join(args.log_dir, 'train'))
+    valid_logger = tb.SummaryWriter(path.join(args.log_dir, 'test'))
+    dummy_train_loss = 0
+    dummy_train_accuracy = 0
+    dummy_validation_accuracy = 0
 
     # This is a strongly simplified training loop
     for epoch in range(10):
@@ -19,12 +24,15 @@ def test_logging(train_logger, valid_logger):
         for iteration in range(20):
             dummy_train_loss = 0.9**(epoch+iteration/20.)
             dummy_train_accuracy = epoch/10. + torch.randn(10)
-            raise NotImplementedError('Log the training loss')
-        raise NotImplementedError('Log the training accuracy')
+            train_logger.add_scalar('train/loss', dummy_train_loss, global_step=iteration)
+        train_logger.add_scalar('train/acc', dummy_train_accuracy.mean(), global_step=epoch)
+
         torch.manual_seed(epoch)
         for iteration in range(10):
             dummy_validation_accuracy = epoch / 10. + torch.randn(10)
-        raise NotImplementedError('Log the validation accuracy')
+        valid_logger.add_scalar('train/val_acc', dummy_validation_accuracy.mean(), global_step=epoch)
+
+
 
 
 if __name__ == "__main__":
