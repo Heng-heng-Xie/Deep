@@ -2,19 +2,21 @@ import torch
 
 
 class CNNClassifier(torch.nn.Module):
-        """
-        Your code here` ASDCVB N  M,.
-        """
+    """
+    Your code here` ASDCVB N  M,.
+    """
     def __init__(self, layers=[16, 32, 64, 128], n_input_channels=3, n_output_channels=6, kernel_size=5):
         super().__init__()
         L = []
         c = n_input_channels
         for l in layers:
-            L.append(torch.nn.Conv2d(c, l, kernel_size, stride=2, padding=kernel_size // 2))
+            L.append(torch.nn.Conv2d(c, l, kernel_size, stride=2, padding=kernel_size//2))
             L.append(torch.nn.ReLU())
             c = l
         self.network = torch.nn.Sequential(*L)
         self.classifier = torch.nn.Linear(c, n_output_channels)
+
+
 
         raise NotImplementedError('CNNClassifier.__init__')
 
@@ -24,8 +26,8 @@ class CNNClassifier(torch.nn.Module):
         @x: torch.Tensor((B,3,64,64))
         @return: torch.Tensor((B,6))
         """
-        classifier = self.classifier(self.network(x).mean(dim=[2, 3]))
 
+        classifier = self.classifier(self.network(x).mean(dim=[2, 3]))
         return classifier
 
         raise NotImplementedError('CNNClassifier.forward')
