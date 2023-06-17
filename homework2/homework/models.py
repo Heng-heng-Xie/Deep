@@ -18,7 +18,7 @@ class CNNClassifier(torch.nn.Module):
 
 
 
-        raise NotImplementedError('CNNClassifier.__init__')
+
 
     def forward(self, x):
         """
@@ -30,7 +30,6 @@ class CNNClassifier(torch.nn.Module):
         classifier = self.classifier(self.network(x).mean(dim=[2, 3]))
         return classifier
 
-        raise NotImplementedError('CNNClassifier.forward')
 
 
 def save_model(model):
