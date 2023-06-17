@@ -14,12 +14,25 @@ class SuperTuxDataset(Dataset):
         Your code here
         Hint: Use your solution (or the master solution) to HW1
         """
+        from os import path
+        import csv
+        self.rows = []
+        image_to_tensor = transforms.ToTensor()
+        with open(path.join(dataset_path, 'labels.csv'), newline='') as file:
+            data = csv.reader(file)
+            for f, l, _ in data:
+                if l in LABEL_NAMES:
+                    im = Image.open(path.join(dataset_path, f))
+                    label_n = LABEL_NAMES.index(l)
+                    self.rows.append((image_to_tensor(im), label_n))
+
         raise NotImplementedError('SuperTuxDataset.__init__')
 
     def __len__(self):
         """
         Your code here
         """
+        return len(self.rows)
         raise NotImplementedError('SuperTuxDataset.__len__')
 
     def __getitem__(self, idx):
@@ -27,6 +40,7 @@ class SuperTuxDataset(Dataset):
         Your code here
         return a tuple: img, label
         """
+        return self.rows[idx]
         raise NotImplementedError('SuperTuxDataset.__getitem__')
 
 
