@@ -25,7 +25,7 @@ def train(args):
     else:
        device = torch.device('cpu')
 
-    model = CNNClassifier().to(device)
+    model = model.to(device)
     if args.continue_training:
         model.load_state_dict(torch.load(path.join(path.dirname(path.abspath(__file__)), 'cnn.th')))
 
@@ -81,6 +81,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--log_dir')
     # Put custom arguments here
-
+    parser.add_argument('-n', '--num_epoch', type=int, default=50)
+    parser.add_argument('-lr', '--learning_rate', type=float, default=1e-3)
+    parser.add_argument('-c', '--continue_training', action='store_true')
     args = parser.parse_args()
     train(args)

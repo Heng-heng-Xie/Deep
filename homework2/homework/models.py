@@ -5,13 +5,14 @@ class CNNClassifier(torch.nn.Module):
     """
     Your code here` ASDCVB N  M,.
     """
-    def __init__(self, layers=[16, 32, 64, 128], n_input_channels=3, n_output_channels=6, kernel_size=5):
+    def __init__(self, layers=[32, 64, 128], n_input_channels=3, n_output_channels=6, kernel_size=3):
         super().__init__()
         L = []
         c = n_input_channels
         for l in layers:
-            L.append(torch.nn.Conv2d(c, l, kernel_size, stride=2, padding=kernel_size//2))
+            L.append(torch.nn.Conv2d(c, l, kernel_size, stride=2, padding=(kernel_size-1)//2))
             L.append(torch.nn.ReLU())
+            L.append(torch.nn.MaxPool2d(3, padding=1, stride=2))
             c = l
         self.network = torch.nn.Sequential(*L)
         self.classifier = torch.nn.Linear(c, n_output_channels)

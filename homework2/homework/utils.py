@@ -26,14 +26,14 @@ class SuperTuxDataset(Dataset):
                     label_n = LABEL_NAMES.index(l)
                     self.rows.append((image_to_tensor(im), label_n))
 
-        raise NotImplementedError('SuperTuxDataset.__init__')
+
 
     def __len__(self):
         """
         Your code here
         """
         return len(self.rows)
-        raise NotImplementedError('SuperTuxDataset.__len__')
+
 
     def __getitem__(self, idx):
         """
@@ -41,7 +41,7 @@ class SuperTuxDataset(Dataset):
         return a tuple: img, label
         """
         return self.rows[idx]
-        raise NotImplementedError('SuperTuxDataset.__getitem__')
+
 
 
 def load_data(dataset_path, num_workers=0, batch_size=128):
