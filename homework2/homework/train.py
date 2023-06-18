@@ -19,13 +19,13 @@ def train(args):
     import torch
 
     if torch.cuda.is_available():
-       device = torch.device('cuda')
+       m_device = torch.device('cuda')
     elif torch.backends.mps.is_available():
-       device = torch.device('mps')
+       m_device = torch.device('mps')
     else:
-       device = torch.device('cpu')
+       m_device = torch.device('cpu')
 
-    model = model.to(device)
+    model = model.to(m_device)
     if args.continue_training:
         model.load_state_dict(torch.load(path.join(path.dirname(path.abspath(__file__)), 'cnn.th')))
 
@@ -36,41 +36,41 @@ def train(args):
     valid_data = load_data('data/valid')
 
     global_step = 0
-    for epoch in range(args.num_epoch):
+    for epo in range(args.num_epoch):
         model.train()
-        acc_vals = []
+        acc_values = []
         for img, label in train_data:
-            img, label = img.to(device), label.to(device)
+            img, label = img.to(m_device), label.to(m_device)
 
             logit = model(img)
-            loss_val = loss(logit, label)
-            acc_val = accuracy(logit, label)
+            loss_value = loss(logit, label)
+            acc_value = accuracy(logit, label)
 
             if train_logger is not None:
-                train_logger.add_scalar('loss', loss_val, global_step)
-            acc_vals.append(acc_val.detach().cpu().numpy())
+                train_logger.add_scalar('loss', loss_value, global_step)
+            acc_values.append(acc_value.detach().cpu().numpy())
 
             optimizer.zero_grad()
-            loss_val.backward()
+            loss_value.backward()
             optimizer.step()
             global_step += 1
-        avg_acc = sum(acc_vals) / len(acc_vals)
+        acc_mean = sum(acc_values) / len(acc_values)
 
         if train_logger:
-            train_logger.add_scalar('accuracy', avg_acc, global_step)
+            train_logger.add_scalar('accuracy', acc_mean, global_step)
 
         model.eval()
-        acc_vals = []
+        acc_values = []
         for img, label in valid_data:
-            img, label = img.to(device), label.to(device)
-            acc_vals.append(accuracy(model(img), label).detach().cpu().numpy())
-        avg_vacc = sum(acc_vals) / len(acc_vals)
+            img, label = img.to(m_device), label.to(m_device)
+            acc_values.append(accuracy(model(img), label).detach().cpu().numpy())
+        vacc_mean = sum(acc_values) / len(acc_values)
 
         if valid_logger:
-            valid_logger.add_scalar('accuracy', avg_vacc, global_step)
+            valid_logger.add_scalar('accuracy', vacc_mean, global_step)
 
         if valid_logger is None or train_logger is None:
-            print('epoch %-3d \t acc = %0.3f \t val acc = %0.3f' % (epoch, avg_acc, avg_vacc))
+            print('epo %-3d \t acc = %0.3f \t val acc = %0.3f' % (epo, acc_mean, vacc_mean))
         save_model(model)
     save_model(model)
 
