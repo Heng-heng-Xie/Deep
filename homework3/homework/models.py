@@ -15,7 +15,7 @@ class CNNClassifier(torch.nn.Module):
                 torch.nn.Conv2d(n_output, n_output, kernel_size=kernel_size, padding=kernel_size//2, bias=False),
                 torch.nn.BatchNorm2d(n_output),
                 torch.nn.ReLU(),
-                torch.nn.max_pool2d(3,padding = 1, stride= kernel_size//2)
+                torch.nn.MaxPool2d(3, padding = 1, stride=kernel_size//2)
             )
 
 
