@@ -44,8 +44,8 @@ def train(args):
 
     import inspect
     transform = eval(args.transform, {k: v for k, v in inspect.getmembers(dense_transforms) if inspect.isclass(v)})
-    train_data = load_dense_data('dense_data/train', num_workers=4, transform=transform)
-    valid_data = load_dense_data('dense_data/valid', num_workers=4)
+    train_data = load_dense_data('dense_data/train', num_workers=2, transform=transform)
+    valid_data = load_dense_data('dense_data/valid', num_workers=2)
 
     global_step = 0
     for epoch in range(args.num_epoch):

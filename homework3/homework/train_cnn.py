@@ -33,8 +33,8 @@ def train(args):
     import inspect
     transform = eval(args.transform,
                      {k: v for k, v in inspect.getmembers(torchvision.transforms) if inspect.isclass(v)})
-    train_data = load_data('data/train', transform=transform, num_workers=4)
-    valid_data = load_data('data/valid', num_workers=4)
+    train_data = load_data('data/train', transform=transform, num_workers=2)
+    valid_data = load_data('data/valid', num_workers=2)
 
     global_step = 0
     for epoch in range(args.num_epoch):
