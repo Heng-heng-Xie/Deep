@@ -36,7 +36,7 @@ def train(args):
     optimizer = torch.optim.Adam(model.parameters(), lr=args.learning_rate, weight_decay=1e-5)
     w = torch.as_tensor(DENSE_CLASS_DISTRIBUTION)**(-args.gamma)
     loss = torch.nn.CrossEntropyLoss(weight=w / w.mean()).to(m_device)
-    scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [10, 15], gamma=0.1)
+    scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [20, 40], gamma=0.1)
 
     import inspect
     transform = eval(args.transform, {k: v for k, v in inspect.getmembers(dense_transforms) if inspect.isclass(v)})
@@ -112,7 +112,7 @@ if __name__ == '__main__':
 
     parser.add_argument('--log_dir')
     # Put custom arguments here
-    parser.add_argument('-n', '--num_epoch', type=int, default=20)
+    parser.add_argument('-n', '--num_epoch', type=int, default=50)
     parser.add_argument('-lr', '--learning_rate', type=float, default=1e-3)
     parser.add_argument('-g', '--gamma', type=float, default=0, help="class dependent weight for cross entropy")
     parser.add_argument('-c', '--continue_training', action='store_true')
