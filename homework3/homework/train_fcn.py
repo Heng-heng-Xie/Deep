@@ -38,6 +38,7 @@ def train(args):
     loss = torch.nn.CrossEntropyLoss(weight=w / w.sum()).to(m_device)
     scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=15, gamma=0.1)
 
+
     import inspect
     transform = eval(args.transform, {k: v for k, v in inspect.getmembers(dense_transforms) if inspect.isclass(v)})
     train_data = load_dense_data('dense_data/train', num_workers=4, transform=transform)
