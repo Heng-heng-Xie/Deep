@@ -30,7 +30,7 @@ class CNNClassifier(torch.nn.Module):
             if self.downsample is not None:
                 identity = self.downsample(x)
             return self.net(x) + identity
-    def __init__(self, layers=[32, 64, 128, 256], n_output_channels=6, kernel_size=3):
+    def __init__(self, layers=[32, 64, 128], n_output_channels=6, kernel_size=3):
         super().__init__()
         """
         Your code here
@@ -78,7 +78,7 @@ class FCN(torch.nn.Module):
         def forward(self, x):
             return F.relu(self.c1(x))
 
-    def __init__(self, layers=[32, 64, 128, 256, 512], n_output_channels=5, kernel_size=3, skip=True):
+    def __init__(self, layers=[32, 64, 128, 256], n_output_channels=5, kernel_size=3, skip=True):
         super().__init__()
         """
         Your code here.
