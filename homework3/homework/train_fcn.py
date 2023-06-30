@@ -37,7 +37,7 @@ def train(args):
     w = torch.as_tensor(DENSE_CLASS_DISTRIBUTION)**(-args.gamma)
     loss = torch.nn.CrossEntropyLoss(weight=w / w.sum()).to(m_device)
     #scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.1)
-    scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [0, 10, 20], gamma=0.1)
+    scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [10, 20], gamma=0.1)
 
 
 
