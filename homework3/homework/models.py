@@ -17,7 +17,7 @@ class CNNClassifier(torch.nn.Module):
                 torch.nn.ReLU(),
                 torch.nn.MaxPool2d(3, padding = 1, stride=kernel_size//2)
             )
-            torch.nn.init.xavier_normal_(self.net[0].weight)
+
 
 
             self.downsample = None
