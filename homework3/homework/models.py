@@ -57,9 +57,9 @@ class CNNClassifier(torch.nn.Module):
         self.mean = torch.Tensor([0.3235, 0.3310, 0.3445])
         self.std = torch.Tensor([0.2533, 0.2224, 0.2483])
         x_norm = torchvision.transforms.Normalize(self.mean, self.std)(x)
+        z = self.network(x_norm)
 
-
-        return self.classifier(x_norm.mean(dim=[2, 3]))
+        return self.classifier(z.mean(dim=[2, 3]))
 
 
 
