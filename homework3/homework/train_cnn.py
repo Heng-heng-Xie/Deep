@@ -89,7 +89,6 @@ def train(args):
             print('epoch %-3d \t acc = %0.3f \t val acc = %0.3f' % (epoch, confusion.global_accuracy,
                                                                     val_confusion.global_accuracy))
 
-
     save_model(model)
 
 
