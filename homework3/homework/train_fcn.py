@@ -89,7 +89,6 @@ def train(args):
         scheduler.step()
     save_model(model)
 
-
 def log(logger, imgs, lbls, logits, global_step):
     """
     logger: train_logger/valid_logger
