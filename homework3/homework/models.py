@@ -56,7 +56,7 @@ class CNNClassifier(torch.nn.Module):
         """
         self.mean = torch.Tensor([0.3235, 0.3310, 0.3445])
         self.std = torch.Tensor([0.2533, 0.2224, 0.2483])
-        x_norm = torchvision.transforms.Normalize(self.mean, self.std)(x)
+        x_norm = torchvision.transforms.Normalize(self.mean.to(x.device), self.std.to(x.device))(x)
         z = self.network(x_norm)
 
         return self.classifier(z.mean(dim=[2, 3]))
@@ -115,7 +115,7 @@ class FCN(torch.nn.Module):
         """
         self.mean = torch.Tensor([0.2788, 0.2657, 0.2629])
         self.std = torch.Tensor([0.2064, 0.1944, 0.2252])
-        norm = torchvision.transforms.Normalize(self.mean, self.std)
+        norm = torchvision.transforms.Normalize(self.mean.to(x.device), self.std.to(x.device))
         x_norm = norm(x)
 
         up_skip = []
