@@ -17,6 +17,7 @@ class CNNClassifier(torch.nn.Module):
                 torch.nn.ReLU(),
                 torch.nn.MaxPool2d(3, padding = 1, stride=kernel_size//2)
             )
+            torch.nn.init.xavier_normal_(self.net[0].weight)
 
 
             self.downsample = None
@@ -77,7 +78,7 @@ class FCN(torch.nn.Module):
         def forward(self, x):
             return F.relu(self.c1(x))
 
-    def __init__(self, layers=[16, 32, 64, 128], n_output_channels=5, kernel_size=3, skip=True):
+    def __init__(self, layers=[32, 64, 128], n_output_channels=5, kernel_size=3, skip=True):
         super().__init__()
         """
         Your code here.
