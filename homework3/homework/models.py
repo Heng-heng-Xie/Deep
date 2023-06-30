@@ -35,7 +35,6 @@ class CNNClassifier(torch.nn.Module):
         Hint: Base this on yours or HW2 master solution if you'd like.
         Hint: Overall model can be similar to HW2, but you likely need some architecture changes (e.g. ResNets)
         """
-
         L = []
         c = 3
         for l in layers:
