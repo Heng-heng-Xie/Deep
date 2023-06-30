@@ -22,41 +22,61 @@ class SuperTuxDataset(Dataset):
         Hint: Do not store torch.Tensor's as data here, but use PIL images, torchvision.transforms expects PIL images
               for most transformations.
         """
-        raise NotImplementedError('SuperTuxDataset.__init__')
+    def __init__(self, dataset_path, transform=transforms.ToTensor()):
+        """
+        Your code here
+        Hint: Use your solution (or the master solution) to HW1 / HW2
+        Hint: If you're loading (and storing) PIL images here, make sure to call image.load(),
+              to avoid an OS error for too many open files.
+        """
+        import csv
+        from os import path
+        self.rows = []
+        self.transform = transform
+        with open(path.join(dataset_path, 'labels.csv'), newline='') as f:
+            reader = csv.reader(f)
+            for f, label, _ in reader:
+                if label in LABEL_NAMES:
+                    image = Image.open(path.join(dataset_path, f))
+                    image.load()
+                    label_idx = LABEL_NAMES.index(label)
+                    self.rows.append((image, label_idx))
 
     def __len__(self):
         """
         Your code here
         """
-        raise NotImplementedError('SuperTuxDataset.__len__')
+        return len(self.rows)
+
 
     def __getitem__(self, idx):
         """
         Your code here
         """
-        raise NotImplementedError('SuperTuxDataset.__getitem__')
-        return img, label
+
+        img, l = self.rows[idx]
+        return self.transform(img), l
 
 
 class DenseSuperTuxDataset(Dataset):
     def __init__(self, dataset_path, transform=dense_transforms.ToTensor()):
         from glob import glob
         from os import path
-        self.files = []
+        self.fname = []
         for im_f in glob(path.join(dataset_path, '*_im.jpg')):
-            self.files.append(im_f.replace('_im.jpg', ''))
+            self.fname.append(im_f.replace('_im.jpg', ''))
         self.transform = transform
 
     def __len__(self):
-        return len(self.files)
+        return len(self.fname)
 
     def __getitem__(self, idx):
-        b = self.files[idx]
+        b = self.fname[idx]
         im = Image.open(b + '_im.jpg')
-        lbl = Image.open(b + '_seg.png')
-        if self.transform is not None:
-            im, lbl = self.transform(im, lbl)
-        return im, lbl
+        l = Image.open(b + '_seg.png')
+        if self.transform:
+            im, l = self.transform(im, l)
+        return im, l
 
 
 def load_data(dataset_path, num_workers=0, batch_size=128, **kwargs):
