@@ -30,7 +30,7 @@ class CNNClassifier(torch.nn.Module):
             if self.downsample is not None:
                 identity = self.downsample(x)
             return self.net(x) + identity
-    def __init__(self, layers=[32, 64, 128], n_output_channels=6, kernel_size=3):
+    def __init__(self, layers=[16, 32, 64, 128], n_output_channels=6, kernel_size=3):
         super().__init__()
         """
         Your code here
