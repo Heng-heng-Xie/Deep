@@ -71,7 +71,8 @@ def train(args):
             global_step += 1
 
         if valid_logger is None or train_logger is None:
-            print('epoch %-3d' %(epoch))
+            print('epoch %-3d \t det_loss = %0.3f \t size_loss = %0.3f \t loss = %0.3f' %
+                  (epoch, det_loss_val, size_loss_val, loss_val))
 
         #scheduler.step()
     save_model(model)
