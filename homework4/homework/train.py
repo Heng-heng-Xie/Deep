@@ -35,7 +35,7 @@ def train(args):
     size_loss = torch.nn.MSELoss(reduction='none')
 
     #scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.1)
-    #scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [10, 20], gamma=0.1)
+    scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [10, 20], gamma=0.1)
 
 
 
@@ -74,7 +74,7 @@ def train(args):
             print('epoch %-3d \t det_loss = %0.3f \t size_loss = %0.3f \t loss = %0.3f' %
                   (epoch, det_loss_val, size_loss_val, loss_val))
 
-        #scheduler.step()
+        scheduler.step()
     save_model(model)
 
 
@@ -97,7 +97,7 @@ if __name__ == '__main__':
 
     parser.add_argument('--log_dir')
     # Put custom arguments here
-    parser.add_argument('-n', '--num_epoch', type=int, default=120)
+    parser.add_argument('-n', '--num_epoch', type=int, default=30)
     parser.add_argument('-lr', '--learning_rate', type=float, default=1e-3)
     parser.add_argument('-c', '--continue_training', action='store_true')
     parser.add_argument('-t', '--transform',
