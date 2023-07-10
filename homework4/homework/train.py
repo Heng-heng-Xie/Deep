@@ -34,15 +34,15 @@ def train(args):
     det_loss = torch.nn.BCEWithLogitsLoss(reduction='none')
     size_loss = torch.nn.MSELoss(reduction='none')
 
-    #scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.1)
-    scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [10, 20], gamma=0.1)
+    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=20, gamma=0.1)
+    #scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [10, 20], gamma=0.1)
 
 
 
 
     import inspect
     transform = eval(args.transform, {k: v for k, v in inspect.getmembers(dense_transforms) if inspect.isclass(v)})
-    train_data = load_detection_data('dense_data/train', num_workers=2, transform=transform)
+    train_data = load_detection_data('dense_data/train', num_workers=4, transform=transform)
 
 
     global_step = 0
@@ -97,7 +97,7 @@ if __name__ == '__main__':
 
     parser.add_argument('--log_dir')
     # Put custom arguments here
-    parser.add_argument('-n', '--num_epoch', type=int, default=30)
+    parser.add_argument('-n', '--num_epoch', type=int, default=80)
     parser.add_argument('-lr', '--learning_rate', type=float, default=1e-3)
     parser.add_argument('-c', '--continue_training', action='store_true')
     parser.add_argument('-t', '--transform',
