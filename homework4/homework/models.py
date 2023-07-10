@@ -59,7 +59,7 @@ class Detector(torch.nn.Module):
 
         def forward(self, x):
             return F.relu(self.c1(x))
-    def __init__(self, layers=[32, 64, 128, 256], n_output_channels=5, kernel_size=3, skip=True):
+    def __init__(self, layers=[32, 64, 128, 256], n_output_channels=3, kernel_size=3, skip=True):
         """
            Your code here.
            Setup your detection network
@@ -78,6 +78,7 @@ class Detector(torch.nn.Module):
             if self.skip:
                 c += skip_layers[i]
         self.classifier = torch.nn.Conv2d(c, n_output_channels, 1)
+        self.size = torch.nn.Conv2d(c, 2, 1)
 
     def forward(self, x):
         """
@@ -104,7 +105,7 @@ class Detector(torch.nn.Module):
             # cat the skip connection with up-convolution
             if self.skip:
                 x_norm = torch.cat([x_norm, up_skip[i]], dim=1)
-        return self.classifier(x_norm)
+        return self.classifier(x_norm), self.size(x_norm)
 
 
 
