@@ -13,7 +13,7 @@ def extract_peak(heatmap, max_pool_ks=7, min_score=-5, max_det=100):
                 heatmap value at the peak. Return no more than max_det peaks per image
     """
     cls = F.max_pool2d(heatmap[None, None], kernel_size=max_pool_ks, padding=max_pool_ks // 2, stride=1)[0, 0]
-    dets = heatmap - (cls > heatmap).float() * 1e6
+    dets = heatmap - (cls > heatmap).float() * 1e5
     if max_det > dets.numel():
         max_det = dets.numel()
     s, l = torch.topk(dets.view(-1), max_det)
@@ -37,8 +37,8 @@ class Detector(torch.nn.Module):
                 torch.nn.ReLU(),
                 torch.nn.Conv2d(n_output, n_output, kernel_size=kernel_size, padding=kernel_size // 2, bias=False),
                 torch.nn.BatchNorm2d(n_output),
-                torch.nn.ReLU(),
-                torch.nn.MaxPool2d(3, padding = 1, stride=kernel_size//2)
+                torch.nn.ReLU()
+
             )
 
 
@@ -62,7 +62,7 @@ class Detector(torch.nn.Module):
 
         def forward(self, x):
             return F.relu(self.net(x))
-    def __init__(self, layers=[32, 64, 128, 256], n_output_channels=3, kernel_size=3, skip=True):
+    def __init__(self, layers=[16, 32, 64, 128], n_output_channels=3, kernel_size=3, skip=True):
         """
            Your code here.
            Setup your detection network
