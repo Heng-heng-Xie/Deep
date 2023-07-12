@@ -13,10 +13,10 @@ def extract_peak(heatmap, max_pool_ks=7, min_score=-5, max_det=100):
                 heatmap value at the peak. Return no more than max_det peaks per image
     """
     cls = F.max_pool2d(heatmap[None, None], kernel_size=max_pool_ks, padding=max_pool_ks // 2, stride=1)[0, 0]
-    dets = heatmap - (cls > heatmap).float() * 1e5
-    if max_det > dets.numel():
-        max_det = dets.numel()
-    s, l = torch.topk(dets.view(-1), max_det)
+    poss_det = heatmap - (cls > heatmap).float() * 1e5
+    if max_det > poss_det.numel():
+        max_det = poss_det.numel()
+    s, l = torch.topk(poss_det.view(-1), max_det)
     return [(float(i), int(j) % heatmap.size(1), int(j) // heatmap.size(1))
             for i, j in zip(s.cpu(), l.cpu()) if s > min_score]
 
