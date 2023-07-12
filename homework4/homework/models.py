@@ -12,13 +12,14 @@ def extract_peak(heatmap, max_pool_ks=7, min_score=-5, max_det=100):
        @return: List of peaks [(score, cx, cy), ...], where cx, cy are the position of a peak and score is the
                 heatmap value at the peak. Return no more than max_det peaks per image
     """
-    cls = F.max_pool2d(heatmap[None, None], kernel_size=max_pool_ks, padding=max_pool_ks // 2, stride=1)[0, 0]
-    poss_det = heatmap - (cls > heatmap).float() * 1e5
-    if max_det > poss_det.numel():
-        max_det = poss_det.numel()
-    s, l = torch.topk(poss_det.view(-1), max_det)
-    return [(float(i), int(j) % heatmap.size(1), int(j) // heatmap.size(1))
-            for i, j in zip(s.cpu(), l.cpu()) if s > min_score]
+    max_cls = F.max_pool2d(heatmap[None, None], kernel_size=max_pool_ks, padding=max_pool_ks // 2, stride=1)[0, 0]
+    possible_det = heatmap - (max_cls > heatmap).float() * 1e5
+    if max_det > possible_det.numel():
+        max_det = possible_det.numel()
+    score, loc = torch.topk(possible_det.view(-1), max_det)
+    return [(float(s), int(l) % heatmap.size(1), int(l) // heatmap.size(1))
+            for s, l in zip(score.cpu(), loc.cpu()) if s > min_score]
+
 
 
 
@@ -33,6 +34,9 @@ class Detector(torch.nn.Module):
                 torch.nn.BatchNorm2d(n_output),
                 torch.nn.ReLU(),
                 torch.nn.Conv2d(n_output, n_output, kernel_size=kernel_size, padding=kernel_size//2, bias=False),
+                torch.nn.BatchNorm2d(n_output),
+                torch.nn.ReLU(),
+                torch.nn.Conv2d(n_output, n_output, kernel_size=kernel_size, padding=kernel_size // 2, bias=False),
                 torch.nn.BatchNorm2d(n_output),
                 torch.nn.ReLU(),
                 torch.nn.MaxPool2d(3, padding=1, stride=kernel_size // 2)
