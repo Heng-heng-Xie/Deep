@@ -58,6 +58,7 @@ def train(args):
             print('gt_det', gt_det.shape)
             print('det', det.shape)
             print('size', size.shape)
+            break
 
             pre_det = torch.sigmoid(det * (1-2*gt_det))
             det_loss_val = (loss_of_det(det, gt_det)*pre_det).mean() / pre_det.mean()
