@@ -63,7 +63,7 @@ class Detector(torch.nn.Module):
 
         def forward(self, x):
             return F.relu(self.net(x))
-    def __init__(self, layers=[16, 32, 64, 128], n_output_channels=3, kernel_size=3, skip=True):
+    def __init__(self, layers=[32, 64, 128, 256], n_output_channels=3, kernel_size=3, skip=True):
         """
            Your code here.
            Setup your detection network
