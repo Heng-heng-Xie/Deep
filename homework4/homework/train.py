@@ -102,6 +102,6 @@ if __name__ == '__main__':
     parser.add_argument('-c', '--continue_training', action='store_true')
     parser.add_argument('-t', '--transform',
                         default='Compose([ColorJitter(0.9, 0.9, 0.9, 0.1), RandomHorizontalFlip(), ToTensor(), ToHeatmap(2)])')
-    parser.add_argument('-w', '--size-weight', type=float, default=0.1)
+    parser.add_argument('-w', '--size-weight', type=float, default=0.01)
     args = parser.parse_args()
     train(args)
