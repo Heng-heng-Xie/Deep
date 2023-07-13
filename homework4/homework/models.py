@@ -45,8 +45,8 @@ class Detector(torch.nn.Module):
 
             self.downsample = None
             if stride != 1 or n_input != n_output:
-                self.downsample = torch.nn.Sequential(torch.nn.Conv2d(n_input, n_output, 1, stride=stride),
-                                                      torch.nn.BatchNorm2d(n_output))
+                self.downsample = torch.nn.Sequential(torch.nn.Conv2d(n_input, n_output, 1, stride=stride)
+                                                      )
 
         def forward(self, x):
             identity = x
