@@ -31,8 +31,8 @@ def train(args):
         model.load_state_dict(torch.load(path.join(path.dirname(path.abspath(__file__)), 'det.th')))
 
     optimizer = torch.optim.Adam(model.parameters(), lr=args.learning_rate, weight_decay=1e-5)
-    det_loss = torch.nn.BCEWithLogitsLoss(reduction='none')
-    size_loss = torch.nn.MSELoss(reduction='none')
+    loss_of_det = torch.nn.BCEWithLogitsLoss(reduction='none')
+    loss_of_size = torch.nn.MSELoss(reduction='none')
 
     scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=20, gamma=0.1)
     #scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [10, 20], gamma=0.1)
@@ -53,9 +53,9 @@ def train(args):
             size_w, _ = gt_det.max(dim=1, keepdim=True)
             det, size = model(img)
 
-            p_det = torch.sigmoid(det * (1-2*gt_det))
-            det_loss_val = (det_loss(det, gt_det)*p_det).mean() / p_det.mean()
-            size_loss_val = (size_w * size_loss(size, gt_size)).mean() / size_w.mean()
+            pre_det = torch.sigmoid(det * (1-2*gt_det))
+            det_loss_val = (loss_of_det(det, gt_det)*pre_det).mean() / pre_det.mean()
+            size_loss_val = (size_w * loss_of_size(size, gt_size)).mean() / size_w.mean()
             loss_val = det_loss_val + size_loss_val * args.size_weight
 
             if train_logger is not None and global_step % 100 == 0:
@@ -102,6 +102,6 @@ if __name__ == '__main__':
     parser.add_argument('-c', '--continue_training', action='store_true')
     parser.add_argument('-t', '--transform',
                         default='Compose([ColorJitter(0.9, 0.9, 0.9, 0.1), RandomHorizontalFlip(), ToTensor(), ToHeatmap(2)])')
-    parser.add_argument('-w', '--size-weight', type=float, default=0.01)
+    parser.add_argument('-w', '--size-weight', type=float, default=0.1)
     args = parser.parse_args()
     train(args)
