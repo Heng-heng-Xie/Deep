@@ -53,11 +53,11 @@ def train(args):
             size_w, _ = gt_det.max(dim=1, keepdim=True)
             det, size = model(img)
 
-            print(img.shape)
-            print(gt_size.shape)
-            print(gt_det.shape)
-            print(det.shape)
-            print(size.shape)
+            print('img', img.shape)
+            print('gt_size', gt_size.shape)
+            print('gt_det', gt_det.shape)
+            print('det', det.shape)
+            print('size', size.shape)
 
             pre_det = torch.sigmoid(det * (1-2*gt_det))
             det_loss_val = (loss_of_det(det, gt_det)*pre_det).mean() / pre_det.mean()
