@@ -14,13 +14,25 @@ def spatial_argmax(logit):
 
 
 class Planner(torch.nn.Module):
-    def __init__(self):
+    def __init__(self, channels=[16, 32, 32, 32]):
         super().__init__()
 
         """
         Your code here
         """
-        raise NotImplementedError('Planner.__init__')
+        conv_block = lambda c, h: [torch.nn.BatchNorm2d(h), torch.nn.Conv2d(h, c, 5, 2, 2), torch.nn.ReLU(True)]
+
+        h, _conv = 3, []
+        for c in channels:
+            _conv += conv_block(c, h)
+            h = c
+
+        self._conv = torch.nn.Sequential(*_conv, torch.nn.Conv2d(h, 1, 1))
+        # self.classifier = torch.nn.Linear(h, 2)
+        # self.classifier = torch.nn.Conv2d(h, 1, 1)
+
+
+
 
     def forward(self, img):
         """
@@ -29,7 +41,10 @@ class Planner(torch.nn.Module):
         @img: (B,3,96,128)
         return (B,2)
         """
-        raise NotImplementedError("Planner.forward")
+        x = self._conv(img)
+        return spatial_argmax(x[:, 0])
+        # return self.classifier(x.mean(dim=[-2, -1]))
+
 
 
 def save_model(model):

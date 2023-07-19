@@ -1,7 +1,7 @@
 import pystk
 
 
-def control(aim_point, current_vel):
+def control(aim_point, current_vel, steer_gain=2, drift_max=0.5, target_velocity=25):
     """
     Set the Action for the low-level controller
     :param aim_point: Aim point, in screen coordinate frame [-1..1]
@@ -17,6 +17,21 @@ def control(aim_point, current_vel):
     Hint: Use action.steer to turn the kart towards the aim_point, clip the steer angle to -1..1
     Hint: You may want to use action.drift=True for wide turns (it will turn faster)
     """
+    import numpy as np
+
+    if current_vel < target_velocity:
+        action.acceleration = 1.0
+    else:
+        action.acceleration = 0.0
+    steering_angle = steer_gain * aim_point[0]
+    action.steer = np.clip(steering_angle * steer_gain, -1, 1)
+
+    if abs(steering_angle) > drift_max:
+        action.drift = True
+    else:
+        action.drift = False
+
+    action.nitro = True
 
     return action
 

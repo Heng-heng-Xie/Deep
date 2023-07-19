@@ -16,6 +16,48 @@ def train(args):
     Your code here, modify your HW4 code
     Hint: Use the log function below to debug and visualize your model
     """
+    import torch
+
+    device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
+
+    model = model.to(device)
+    if args.continue_training:
+        model.load_state_dict(torch.load(path.join(path.dirname(path.abspath(__file__)), 'planner.th')))
+
+    loss = torch.nn.L1Loss()
+    optimizer = torch.optim.Adam(model.parameters(), lr=args.learning_rate)
+
+    import inspect
+    transform = eval(args.transform, {k: v for k, v in inspect.getmembers(dense_transforms) if inspect.isclass(v)})
+
+    train_data = load_data('drive_data', transform=transform, num_workers=args.num_workers)
+
+    global_step = 0
+    for epoch in range(args.num_epoch):
+        model.train()
+        losses = []
+        for img, label in train_data:
+            img, label = img.to(device), label.to(device)
+
+            pred = model(img)
+            loss_val = loss(pred, label)
+
+            if train_logger is not None:
+                train_logger.add_scalar('loss', loss_val, global_step)
+                if global_step % 100 == 0:
+                    log(train_logger, img, label, pred, global_step)
+
+            optimizer.zero_grad()
+            loss_val.backward()
+            optimizer.step()
+            global_step += 1
+
+            losses.append(loss_val.detach().cpu().numpy())
+
+        avg_loss = np.mean(losses)
+        if train_logger is None:
+            print('epoch %-3d \t loss = %0.3f' % (epoch, avg_loss))
+        save_model(model)
 
     save_model(model)
 
@@ -44,6 +86,10 @@ if __name__ == '__main__':
 
     parser.add_argument('--log_dir')
     # Put custom arguments here
-
+    parser.add_argument('-n', '--num_epoch', type=int, default=50)
+    parser.add_argument('-w', '--num_workers', type=int, default=4)
+    parser.add_argument('-lr', '--learning_rate', type=float, default=1e-3)
+    parser.add_argument('-c', '--continue_training', action='store_true')
+    parser.add_argument('-t', '--transform', default='Compose([ColorJitter(0.2, 0.5, 0.5, 0.2), RandomHorizontalFlip(), ToTensor()])')
     args = parser.parse_args()
     train(args)
