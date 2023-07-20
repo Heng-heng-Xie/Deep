@@ -27,6 +27,9 @@ def train(args):
     loss = torch.nn.L1Loss()
     optimizer = torch.optim.Adam(model.parameters(), lr=args.learning_rate)
 
+    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=15, gamma=0.1)
+    #scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [10, 20], gamma=0.1)
+
     import inspect
     transform = eval(args.transform, {k: v for k, v in inspect.getmembers(dense_transforms) if inspect.isclass(v)})
 
@@ -54,10 +57,11 @@ def train(args):
 
             losses.append(loss_val.detach().cpu().numpy())
 
-        avg_loss = np.mean(losses)
+        mean_loss = np.mean(losses)
         if train_logger is None:
-            print('epoch %-3d \t loss = %0.3f' % (epoch, avg_loss))
-        save_model(model)
+            print('epoch %-3d \t loss = %0.3f' % (epoch, mean_loss))
+
+        scheduler.step()
 
     save_model(model)
 
@@ -86,7 +90,7 @@ if __name__ == '__main__':
 
     parser.add_argument('--log_dir')
     # Put custom arguments here
-    parser.add_argument('-n', '--num_epoch', type=int, default=50)
+    parser.add_argument('-n', '--num_epoch', type=int, default=60)
     parser.add_argument('-w', '--num_workers', type=int, default=4)
     parser.add_argument('-lr', '--learning_rate', type=float, default=1e-3)
     parser.add_argument('-c', '--continue_training', action='store_true')
