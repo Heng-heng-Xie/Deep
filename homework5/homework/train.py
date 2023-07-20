@@ -27,7 +27,7 @@ def train(args):
     loss = torch.nn.L1Loss()
     optimizer = torch.optim.Adam(model.parameters(), lr=args.learning_rate)
 
-    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=20, gamma=0.1)
+    #scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=20, gamma=0.1)
     #scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [10, 20], gamma=0.1)
 
     import inspect
@@ -61,7 +61,7 @@ def train(args):
         if train_logger is None:
             print('epoch %-3d \t loss = %0.3f' % (epoch, mean_loss))
 
-        scheduler.step()
+        #scheduler.step()
 
     save_model(model)
 
