@@ -14,7 +14,7 @@ def spatial_argmax(logit):
 
 
 class Planner(torch.nn.Module):
-    def __init__(self, layers=[32, 64, 64, 64]):
+    def __init__(self, layers=[16, 32, 32, 32]):
         super().__init__()
 
         """

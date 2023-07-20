@@ -1,7 +1,7 @@
 import pystk
 
 
-def control(aim_point, current_vel, steer_gain=2, drift_max=0.5, target_velocity=20):
+def control(aim_point, current_vel, steer_gain=2, drift_max=0.5, target_velocity=30):
     """
     Set the Action for the low-level controller
     :param aim_point: Aim point, in screen coordinate frame [-1..1]
