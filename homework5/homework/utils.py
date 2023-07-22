@@ -78,6 +78,7 @@ class PyTux:
                               data
         :return: Number of steps played
         """
+        import io
 
 
 
@@ -103,6 +104,8 @@ class PyTux:
         if verbose:
             import matplotlib.pyplot as plt
             fig, ax = plt.subplots(1, 1)
+
+        frames = []
 
 
 
@@ -148,14 +151,29 @@ class PyTux:
                     ax.add_artist(plt.Circle(WH2*(1+aim_point_image), 2, ec='g', fill=False, lw=1.5))
                 plt.pause(1e-3)
 
+                with io.BytesIO() as buff:
+                    fig.savefig(buff, format='raw')
+                    buff.seek(0)
+                    data = np.frombuffer(buff.getvalue(), dtype=np.uint8)
+                w, h = fig.canvas.get_width_height()
+                im = data.reshape((int(h), int(w), -1))
+
+                frames.append(im)
+
+
 
 
             self.k.step(action)
             t += 1
 
+        if verbose:
+            import imageio
+
+            imageio.mimwrite("test.mp4", frames, fps=30, bitrate=1000000)
+            return t, kart.overall_distance / track.length
 
 
-        return t, kart.overall_distance / track.length
+
 
     def close(self):
         """
