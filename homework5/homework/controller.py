@@ -1,7 +1,7 @@
 import pystk
 
 
-def control(aim_point, current_vel, steer_gain=2, drift_max=0.5, target_velocity=30):
+def control(aim_point, current_vel, steer_factor=2, drift_angle=0.5, target_velocity=30):
     """
     Set the Action for the low-level controller
     :param aim_point: Aim point, in screen coordinate frame [-1..1]
@@ -23,10 +23,10 @@ def control(aim_point, current_vel, steer_gain=2, drift_max=0.5, target_velocity
         action.acceleration = 1.0
     else:
         action.acceleration = 0.0
-    steering_angle = steer_gain * aim_point[0]
-    action.steer = np.clip(steering_angle * steer_gain, -1, 1)
+    steering_angle = steer_factor * aim_point[0]
+    action.steer = np.clip(steering_angle * steer_factor, -1, 1)
 
-    if abs(steering_angle) > drift_max:
+    if abs(steering_angle) > drift_angle:
         action.drift = True
     else:
         action.drift = False

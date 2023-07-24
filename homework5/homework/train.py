@@ -43,19 +43,19 @@ def train(args):
             img, label = img.to(device), label.to(device)
 
             pred = model(img)
-            loss_val = loss(pred, label)
+            loss_value = loss(pred, label)
 
             if train_logger is not None:
-                train_logger.add_scalar('loss', loss_val, global_step)
+                train_logger.add_scalar('loss', loss_value, global_step)
                 if global_step % 100 == 0:
                     log(train_logger, img, label, pred, global_step)
 
             optimizer.zero_grad()
-            loss_val.backward()
+            loss_value.backward()
             optimizer.step()
             global_step += 1
 
-            losses.append(loss_val.detach().cpu().numpy())
+            losses.append(loss_value.detach().cpu().numpy())
 
         mean_loss = np.mean(losses)
         if train_logger is None:

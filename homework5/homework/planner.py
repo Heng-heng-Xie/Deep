@@ -8,9 +8,10 @@ def spatial_argmax(logit):
     :param logit: A tensor of size BS x H x W
     :return: A tensor of size BS x 2 the soft-argmax in normalized coordinates (-1 .. 1)
     """
-    p_weights = F.softmax(logit.view(logit.size(0), -1), dim=-1).view_as(logit)
-    return torch.stack(((p_weights.sum(1) * torch.linspace(-1, 1, logit.size(2)).to(logit.device)[None]).sum(1),
-                        (p_weights.sum(2) * torch.linspace(-1, 1, logit.size(1)).to(logit.device)[None]).sum(1)), 1)
+    weights = F.softmax(logit.view(logit.size(0), -1), dim=-1).view_as(logit)
+    w = (weights.sum(1) * torch.linspace(-1, 1, logit.size(2)).to(logit.device)[None]).sum(1)
+    h = (weights.sum(2) * torch.linspace(-1, 1, logit.size(1)).to(logit.device)[None]).sum(1)
+    return torch.stack((w, h), 1)
 
 
 class Planner(torch.nn.Module):
@@ -20,14 +21,18 @@ class Planner(torch.nn.Module):
         """
         Your code here
         """
-        conv_block = lambda c, h: [torch.nn.BatchNorm2d(h), torch.nn.Conv2d(h, c, 5, 2, 2), torch.nn.ReLU(True)]
+
+        def conv_block(input, output):
+            network = [torch.nn.BatchNorm2d(input), torch.nn.Conv2d(input, output, 5, 2, 2), torch.nn.ReLU(True)]
+            return network
+
 
         cha, p_conv = 3, []
-        for c in layers:
-            p_conv += conv_block(c, cha)
-            cha = c
+        for channel in layers:
+            p_conv += conv_block(cha, channel)
+            cha = channel
 
-        self._conv = torch.nn.Sequential(*p_conv, torch.nn.Conv2d(cha, 1, 1))
+        self.net = torch.nn.Sequential(*p_conv, torch.nn.Conv2d(cha, 1, 1))
 
 
 
@@ -40,7 +45,7 @@ class Planner(torch.nn.Module):
         @img: (B,3,96,128)
         return (B,2)
         """
-        x = self._conv(img)
+        x = self.net(img)
         return spatial_argmax(x[:, 0])
 
 
